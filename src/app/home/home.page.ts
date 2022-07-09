@@ -123,8 +123,28 @@ export class HomePage {
 		this.addWalk(newValue);
 	}
 
+	getColorForWalk(walk: WalkInterface): string {
+		const currentDay = Number(new Date().toDateString().substring(8, 10));
+		const walkDay = Number(walk.date.substring(8, 10));
+
+		if ((walk.isDone && walk.walked && walkDay > currentDay) || (!walk.isDone && walkDay < currentDay)) {
+			return 'danger';
+		}
+		return walk.isDone ? ((walk.walked ?? 0) < walk.planned ? 'warning' : 'success') : '';
+	}
+
 	getWalkedKm(value: TargetInterface): number {
 		return Number(value.walks.reduce((prev, cur) => prev + (cur.walked ?? 0), 0).toFixed(2));
+	}
+
+	getAvarageKm(value: TargetInterface): number {
+		// value.walks.filter(w => w.isDone && w.walked).length
+		return Number((this.getWalkedKm(value) / new Date().getDate()).toFixed(2));
+	}
+
+	getDaysInMonth(): number {
+		const date = new Date();
+		return new Date(date.getFullYear(), date.getMonth(), 0).getDate();
 	}
 
 	getLabel(value: TargetInterface): string {

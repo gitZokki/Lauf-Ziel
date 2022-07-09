@@ -4,7 +4,7 @@
 		<ion-input clearInput type="number" formControlName="target"></ion-input>
 	</ion-item>
 	<ion-item-divider></ion-item-divider>
-	<ion-item id="open-target-date-modal">
+	<ion-item (click)="targetDateModal.present()">
 		<ion-label position="fixed">Monat-Jahr:</ion-label>
 		<ion-input readonly>{{ TARGET_GROUP.get('date')?.value | date:DATE_FORMAT }}</ion-input>
 	</ion-item>
@@ -22,7 +22,7 @@
 	</ion-buttons>
 
 
-	<ion-modal trigger="open-target-date-modal">
+	<ion-modal #targetDateModal class="open-target-date-modal">
 		<ng-template>
 			<ion-datetime #dateTime presentation="month-year" size="cover" [yearValues]="AVAILABLE_YEARS"
 				formControlName="date">

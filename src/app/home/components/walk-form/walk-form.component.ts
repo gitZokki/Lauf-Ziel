@@ -35,16 +35,17 @@ export class WalkFormComponent implements OnInit {
 	ngOnInit(): void {
 		this.resetAddFrom();
 		if (this.walk) {
-			this.WALK_GROUP.addControl(
-				'walked',
-				new FormControl(undefined, [
-					Validators.required,
-					Validators.min(0.01),
-					Validators.max(99999),
-					Validators.pattern(environment.DEMCIMAL_PATTERN),
-				])
-			);
+			// eslint-disable-next-line @typescript-eslint/no-unused-expressions
+			this.walk.isDone && this.addWalkedControll();
 			this.WALK_GROUP.patchValue({ ...this.walk });
+		}
+	}
+
+	changeIsDone(isChecked: boolean): void {
+		if (isChecked) {
+			this.addWalkedControll(!this.walk ? this.WALK_GROUP.get('planned')?.value : undefined);
+		} else {
+			this.WALK_GROUP.removeControl('walked');
 		}
 	}
 
@@ -72,6 +73,9 @@ export class WalkFormComponent implements OnInit {
 
 			this.onSubmit.emit(value as WalkInterface);
 		} else {
+			if (!this.WALK_GROUP.get('walked')?.valid) {
+				(document.querySelector('[formControlName="walked"]')?.parentElement as any)?.click();
+			}
 			this.WALK_GROUP.markAllAsTouched();
 		}
 	}
@@ -93,5 +97,17 @@ export class WalkFormComponent implements OnInit {
 				this.WALK_GROUP.patchValue({ date: currentDate.toISOString() });
 			}
 		}
+	}
+
+	private addWalkedControll(defaultValue?: number): void {
+		this.WALK_GROUP.addControl(
+			'walked',
+			new FormControl(defaultValue, [
+				Validators.required,
+				Validators.min(0.01),
+				Validators.max(99999),
+				Validators.pattern(environment.DEMCIMAL_PATTERN),
+			])
+		);
 	}
 }

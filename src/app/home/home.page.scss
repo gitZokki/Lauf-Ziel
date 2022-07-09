@@ -1,4 +1,9 @@
 :host {
+	ion-item-option {
+		margin-right: 8px;
+		border-radius: 8px;
+	}
+
 	ion-card-header {
 		display: flex;
 		flex-direction: row;

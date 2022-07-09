@@ -4,20 +4,23 @@
 		<ion-input clearInput type="number" formControlName="planned"></ion-input>
 	</ion-item>
 	<ion-item-divider></ion-item-divider>
-	<ion-item *ngIf="walk">
+	<ion-item>
 		<ion-label position="fixed">Gelaufen:</ion-label>
-		<ion-input clearInput type="number" [disabled]="!WALK_GROUP.get('isDone')?.value" formControlName="walked">
+		<ion-input *ngIf="WALK_GROUP.get('walked')" clearInput type="number" [disabled]="!WALK_GROUP.get('isDone')?.value"
+			formControlName="walked">
+		</ion-input>
+		<ion-input *ngIf="!WALK_GROUP.get('walked')" clearInput type="number" [disabled]="!WALK_GROUP.get('isDone')?.value">
 		</ion-input>
 	</ion-item>
-	<ion-item-divider *ngIf="walk"></ion-item-divider>
-	<ion-item id="open-walk-date-modal">
+	<ion-item-divider></ion-item-divider>
+	<ion-item (click)="walkDateModal.present()">
 		<ion-label position="fixed">Tag:</ion-label>
 		<ion-input readonly>{{ WALK_GROUP.get('date')?.value | date:DAY_FORMAT }}</ion-input>
 	</ion-item>
 	<ion-item-divider></ion-item-divider>
 	<ion-item>
 		<ion-label position="fixed">Erledigt:</ion-label>
-		<ion-checkbox formControlName="isDone"></ion-checkbox>
+		<ion-checkbox formControlName="isDone" (ngModelChange)="changeIsDone($event)"></ion-checkbox>
 	</ion-item>
 	<ion-item-divider></ion-item-divider>
 	<ion-buttons class="ion-padding">
@@ -28,7 +31,7 @@
 	</ion-buttons>
 
 
-	<ion-modal trigger="open-walk-date-modal">
+	<ion-modal #walkDateModal class="open-walk-date-modal">
 		<ng-template>
 			<ion-datetime #dateTime presentation="date" size="cover" formControlName="date" [monthValues]="month"
 				[yearValues]="year">
