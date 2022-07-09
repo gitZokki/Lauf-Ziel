@@ -1,0 +1,120 @@
+<ion-header>
+	<ion-toolbar>
+		<ion-title>
+			Lauf Ziel
+		</ion-title>
+		<ion-buttons slot="primary" *ngIf="(segment.value === 'all' || segment.value === 'favorites') && selectedTarget">
+			<ion-button (click)="selectedTarget.isFavorite = !selectedTarget.isFavorite; sortAndSaveTargets()">
+				<ion-icon *ngIf="!selectedTarget.isFavorite" slot="icon-only" icon="star-outline"></ion-icon>
+				<ion-icon *ngIf="selectedTarget.isFavorite" slot="icon-only" icon="star" color="warning"></ion-icon>
+			</ion-button>
+			<ion-button id="open-edit-target-modal">
+				<ion-icon slot="icon-only" icon="pencil"></ion-icon>
+			</ion-button>
+			<ion-modal #editTargetModal trigger="open-edit-target-modal">
+				<ng-template>
+					<ion-item style="--inner-padding-end: 0">
+						<ion-label>Ziel Bearbeiten</ion-label>
+						<ion-button fill="clear" size="large" (click)="editTargetModal.dismiss()">X</ion-button>
+					</ion-item>
+					<wt-target-form [target]="selectedTarget" (onSubmit)="changeTarget($event); editTargetModal.dismiss()"
+						(onDelete)="deleteTarget(selectedTarget); editTargetModal.dismiss()">
+					</wt-target-form>
+				</ng-template>
+			</ion-modal>
+		</ion-buttons>
+	</ion-toolbar>
+</ion-header>
+
+<ion-content>
+	<ion-toolbar>
+		<ion-segment #segment value="all" (ionChange)="setFilteredTargets()">
+			<ion-segment-button value="all">Alle</ion-segment-button>
+			<ion-segment-button [disabled]="isFavDisabled()" value="favorites">Favoriten
+			</ion-segment-button>
+		</ion-segment>
+	</ion-toolbar>
+
+	<ion-card *ngIf="!selectedTarget">
+		<ion-list>
+			<ion-item-sliding *ngFor="let target of filteredTargets">
+				<ion-item [color]="getWalkedKm(target) < target.target ? '' : 'success'" (click)="selectedTarget = target">
+					<ion-icon *ngIf="!target.isFavorite" slot="start" icon="star-outline"
+						(click)="$event.stopPropagation(); target.isFavorite = !target.isFavorite"></ion-icon>
+					<ion-icon *ngIf="target.isFavorite" slot="start" icon="star" color="warning"
+						(click)="$event.stopPropagation(); target.isFavorite = !target.isFavorite"></ion-icon>
+					<ion-label>{{ target.date | date:DATE_FORMAT }}</ion-label>
+					<ion-label slot="end">{{ getLabel(target) }}</ion-label>
+				</ion-item>
+				<ion-item-options side="end">
+					<ion-item-option (click)="deleteTarget(target)" color="danger">Löschen</ion-item-option>
+				</ion-item-options>
+			</ion-item-sliding>
+		</ion-list>
+	</ion-card>
+
+	<ion-card *ngIf="selectedTarget" class="ion-margin" style="padding-top: 0;">
+		<ion-card-header>
+			<ion-button style="height: 64px;" [disabled]="filteredTargets.length < 2" (click)="changeSelected(-1)">&#10094;
+			</ion-button>
+			<ion-label class="ion-text-center ion-justify-content-center" color="dark">
+				<h2 [class]="getWalkedKm(selectedTarget) >= selectedTarget.target ? 'ion-color-success' : ''"
+					style="color: var(--ion-color-base);">{{ getLabel(selectedTarget) }}</h2>
+				<p>Monat: {{ selectedTarget.date | date:DATE_FORMAT }}</p>
+			</ion-label>
+			<ion-button style="height: 64px;" [disabled]="filteredTargets.length < 2" (click)="changeSelected(1)">&#10095;
+			</ion-button>
+		</ion-card-header>
+		<ion-item-divider></ion-item-divider>
+		<ion-card-content>
+			<ion-item-sliding *ngFor="let walk of selectedTarget.walks">
+				<ion-item (click)="editWalkModal.present()">
+					<ion-label [color]="walk.isDone ? (walk.walked ?? 0) < walk.planned ? 'warning' : 'success' : ''">
+						<h2 *ngIf="!walk.walked">Geplant: {{ walk.planned }}Km</h2>
+						<h2 *ngIf="walk.walked">Gelaufen: {{ walk.walked }} / {{ walk.planned }}Km</h2>
+						<h3>Datum: {{ walk.date | date:DAY_FORMAT }}</h3>
+					</ion-label>
+					<ion-icon slot="end" [icon]="walk.isDone ? 'checkbox-outline' : 'square-outline'"
+						[color]="walk.isDone ? 'primary' : ''">
+					</ion-icon>
+				</ion-item>
+				<ion-item-options side="end">
+					<ion-item-option color="danger" (click)="deleteWalk(walk)">Löschen</ion-item-option>
+					<ion-item-option (click)="editWalkModal.present()">Bearbeiten</ion-item-option>
+				</ion-item-options>
+
+				<ion-modal #editWalkModal class="open-edit-walk-modal">
+					<ng-template>
+						<ion-item style="--inner-padding-end: 0">
+							<ion-label>Lauf Bearbeiten</ion-label>
+							<ion-button fill="clear" size="large" (click)="editWalkModal.dismiss()">X</ion-button>
+						</ion-item>
+						<wt-walk-form [walk]="walk" (onSubmit)="editWalk(walk, $event); editWalkModal.dismiss()"
+							(onDelete)="deleteWalk(walk); editWalkModal.dismiss()">
+						</wt-walk-form>
+					</ng-template>
+				</ion-modal>
+			</ion-item-sliding>
+		</ion-card-content>
+	</ion-card>
+
+	<ion-fab vertical="bottom" horizontal="end" slot="fixed">
+		<ion-fab-button [id]="selectedTarget ? 'open-add-walk-modal' : 'open-add-target-modal'">
+			<ion-icon name="add"></ion-icon>
+		</ion-fab-button>
+
+		<ion-modal #addModal [trigger]="selectedTarget ? 'open-add-walk-modal' : 'open-add-target-modal'">
+			<ng-template>
+				<ion-item style="--inner-padding-end: 0">
+					<ion-label>{{ selectedTarget ? 'Ziel' : 'Lauf' }} Hinzufügen</ion-label>
+					<ion-button fill="clear" size="large" (click)="addModal.dismiss()">X</ion-button>
+				</ion-item>
+				<wt-walk-form *ngIf="selectedTarget; else isNotSelected" [date]="selectedTarget.date"
+					(onSubmit)="addWalk($event); addModal.dismiss()"></wt-walk-form>
+				<ng-template #isNotSelected>
+					<wt-target-form (onSubmit)="addTarget($event); addModal.dismiss()"></wt-target-form>
+				</ng-template>
+			</ng-template>
+		</ion-modal>
+	</ion-fab>
+</ion-content>

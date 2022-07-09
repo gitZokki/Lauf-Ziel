@@ -1,0 +1,10 @@
+{
+	"name": "Lauf Ziel",
+	"integrations": {
+		"capacitor": {}
+	},
+	"type": "angular",
+	"hooks": {
+		"build:before": "./scripts/set-icons.js"
+	}
+}

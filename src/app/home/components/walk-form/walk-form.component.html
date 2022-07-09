@@ -1,0 +1,42 @@
+<ion-card class="ion-margin-top ion-margin-horizontal" [formGroup]="WALK_GROUP">
+	<ion-item>
+		<ion-label position="fixed">Geplant:</ion-label>
+		<ion-input clearInput type="number" formControlName="planned"></ion-input>
+	</ion-item>
+	<ion-item-divider></ion-item-divider>
+	<ion-item *ngIf="walk">
+		<ion-label position="fixed">Gelaufen:</ion-label>
+		<ion-input clearInput type="number" [disabled]="!WALK_GROUP.get('isDone')?.value" formControlName="walked">
+		</ion-input>
+	</ion-item>
+	<ion-item-divider *ngIf="walk"></ion-item-divider>
+	<ion-item id="open-walk-date-modal">
+		<ion-label position="fixed">Tag:</ion-label>
+		<ion-input readonly>{{ WALK_GROUP.get('date')?.value | date:DAY_FORMAT }}</ion-input>
+	</ion-item>
+	<ion-item-divider></ion-item-divider>
+	<ion-item>
+		<ion-label position="fixed">Erledigt:</ion-label>
+		<ion-checkbox formControlName="isDone"></ion-checkbox>
+	</ion-item>
+	<ion-item-divider></ion-item-divider>
+	<ion-buttons class="ion-padding">
+		<ion-button (click)="walk ? deleteWalk() : resetAddFrom()" [color]="walk ? 'danger' : ''">{{ walk ?
+			'Löschen' : 'Zurücksetzen' }}
+		</ion-button>
+		<ion-button color="primary" style="margin-left: auto;" (click)="submit()">Speichern</ion-button>
+	</ion-buttons>
+
+
+	<ion-modal trigger="open-walk-date-modal">
+		<ng-template>
+			<ion-datetime #dateTime presentation="date" size="cover" formControlName="date" [monthValues]="month"
+				[yearValues]="year">
+				<ion-buttons slot="buttons">
+					<ion-button slot="secondary" (click)="dateTime.cancel(true)">Abbrechen</ion-button>
+					<ion-button slot="primary" color="primary" (click)="dateTime.confirm(true)">Speichern</ion-button>
+				</ion-buttons>
+			</ion-datetime>
+		</ng-template>
+	</ion-modal>
+</ion-card>

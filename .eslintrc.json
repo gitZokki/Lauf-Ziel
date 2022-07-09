@@ -1,0 +1,56 @@
+{
+	"root": true,
+	"ignorePatterns": ["projects/**/*"],
+	"parserOptions": {
+		"ecmaVersion": "latest"
+	},
+	"env": {
+		"node": true
+	},
+	"overrides": [
+		{
+			"files": ["*.ts"],
+			"parserOptions": {
+				"project": ["tsconfig.json", "e2e/tsconfig.json"],
+				"createDefaultProgram": true
+			},
+			"extends": [
+				"plugin:@angular-eslint/ng-cli-compat",
+				"plugin:@angular-eslint/ng-cli-compat--formatting-add-on",
+				"plugin:@angular-eslint/template/process-inline-templates"
+			],
+			"rules": {
+				"@angular-eslint/component-class-suffix": [
+					"error",
+					{
+						"suffixes": ["Page", "Component"]
+					}
+				],
+				"@angular-eslint/component-selector": [
+					"error",
+					{
+						"type": "element",
+						"prefix": "wt",
+						"style": "kebab-case"
+					}
+				],
+				"@angular-eslint/directive-selector": [
+					"error",
+					{
+						"type": "attribute",
+						"prefix": "wt",
+						"style": "camelCase"
+					}
+				],
+				"@typescript-eslint/naming-convention": 0,
+				"@angular-eslint/no-output-on-prefix": 0,
+				"eol-last": 0
+			}
+		},
+		{
+			"files": ["*.html"],
+			"extends": ["plugin:@angular-eslint/template/recommended"],
+			"rules": {}
+		}
+	]
+}
