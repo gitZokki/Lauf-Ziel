@@ -22,9 +22,9 @@
 	</ion-buttons>
 
 
-	<ion-modal #targetDateModal class="open-target-date-modal">
+	<ion-modal #targetDateModal>
 		<ng-template>
-			<ion-datetime #dateTime presentation="month-year" size="cover" [yearValues]="AVAILABLE_YEARS"
+			<ion-datetime #dateTime size="cover" presentation="month-year" [yearValues]="AVAILABLE_YEARS"
 				formControlName="date">
 				<ion-buttons slot="buttons">
 					<ion-button slot="secondary" (click)="dateTime.cancel(true)">Abbrechen</ion-button>

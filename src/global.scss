@@ -27,26 +27,9 @@
 
 ion-modal {
 	--width: 85%;
+	--height: fit-content;
 	--border-radius: 16px;
 	--box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-}
-
-ion-modal.open-target-date-modal {
-	--max-height: 292px;
-}
-
-ion-modal.open-edit-target-modal,
-ion-modal.open-add-target-modal {
-	--max-height: 412px;
-}
-
-ion-modal.open-add-walk-modal,
-ion-modal.open-edit-walk-modal {
-	--max-height: 492px;
-}
-
-ion-modal.open-walk-date-modal {
-	--max-height: 397px;
 }
 
 ion-modal::part(backdrop),
@@ -63,8 +46,8 @@ ion-alert.confirm-alert {
 }
 
 button.alert-button.alert-button-cancel {
-	background-color: var(--ion-color-success);
-	color: var(--ion-color-success-contrast);
+	background-color: var(--ion-color-primary);
+	color: var(--ion-color-primary-contrast);
 }
 
 button.alert-button.alert-button-cancel {

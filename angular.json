@@ -34,7 +34,9 @@
 							"src/theme/variables.scss",
 							"src/global.scss"
 						],
-						"scripts": [],
+						"scripts": [
+							"./scripts/ion-datetime-patch.js"
+						],
 						"aot": false,
 						"vendorChunk": true,
 						"extractLicenses": false,
@@ -151,8 +153,8 @@
 	"cli": {
 		"schematicCollections": [
 			"@ionic/angular-toolkit"
-    ],
-    "analytics": false
+		],
+		"analytics": false
 	},
 	"schematics": {
 		"@ionic/angular-toolkit:component": {

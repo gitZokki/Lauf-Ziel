@@ -124,10 +124,12 @@ export class HomePage {
 	}
 
 	getColorForWalk(walk: WalkInterface): string {
-		const currentDay = Number(new Date().toDateString().substring(8, 10));
+		const currentMonth = new Date().getMonth() + 1;
+		const walkMonth = Number(walk.date.substring(5, 7));
+		const currentDay = new Date().getDate();
 		const walkDay = Number(walk.date.substring(8, 10));
 
-		if ((walk.isDone && walk.walked && walkDay > currentDay) || (!walk.isDone && walkDay < currentDay)) {
+		if (walkMonth <= currentMonth && ((walk.isDone && walk.walked && walkDay > currentDay) || (!walk.isDone && walkDay < currentDay))) {
 			return 'danger';
 		}
 		return walk.isDone ? ((walk.walked ?? 0) < walk.planned ? 'warning' : 'success') : '';
@@ -159,6 +161,10 @@ export class HomePage {
 		localStorage.setItem('targets', JSON.stringify(this.targets));
 	}
 
+	getHighlightedDays(target: TargetInterface): number[] {
+		return target.walks.map(w => new Date(w.date).getDate());
+	}
+
 	private showAlert(confirm: () => void): void {
 		this.alertCtr
 			.create({
@@ -167,11 +173,13 @@ export class HomePage {
 				buttons: [
 					{
 						text: 'Ja',
+						role: 'confirm',
 						cssClass: 'alert-button-confirm',
 						handler: confirm,
 					},
 					{
 						text: 'Nein',
+						role: 'cancel',
 						cssClass: 'alert-button-cancel',
 					},
 				],

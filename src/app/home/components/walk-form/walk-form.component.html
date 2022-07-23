@@ -31,10 +31,10 @@
 	</ion-buttons>
 
 
-	<ion-modal #walkDateModal class="open-walk-date-modal">
+	<ion-modal #walkDateModal (ionModalDidPresent)="setHighlightDays()">
 		<ng-template>
-			<ion-datetime #dateTime presentation="date" size="cover" formControlName="date" [monthValues]="month"
-				[yearValues]="year">
+			<ion-datetime #dateTime formControlName="date" presentation="date" size="cover" firstDayOfWeek="1"
+				[monthValues]="month" [yearValues]="year">
 				<ion-buttons slot="buttons">
 					<ion-button slot="secondary" (click)="dateTime.cancel(true)">Abbrechen</ion-button>
 					<ion-button slot="primary" color="primary" (click)="dateTime.confirm(true)">Speichern</ion-button>

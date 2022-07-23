@@ -1,5 +1,6 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { IonDatetime } from '@ionic/angular';
 import { environment } from 'src/environments/environment';
 import { WalkInterface } from '../../home.page';
 
@@ -10,8 +11,11 @@ import { WalkInterface } from '../../home.page';
 })
 export class WalkFormComponent implements OnInit {
 	//
+	@ViewChild('dateTime') dateTime?: IonDatetime;
+
 	@Input() date!: string;
 	@Input() walk?: WalkInterface;
+	@Input() highlightDays?: number[];
 
 	@Output() onSubmit = new EventEmitter<WalkInterface>();
 	@Output() onDelete = new EventEmitter<void>();
@@ -77,6 +81,30 @@ export class WalkFormComponent implements OnInit {
 				(document.querySelector('[formControlName="walked"]')?.parentElement as any)?.click();
 			}
 			this.WALK_GROUP.markAllAsTouched();
+		}
+	}
+
+	setHighlightDays(): void {
+		if (!this.highlightDays || this.highlightDays.length < 1) {
+			return;
+		}
+
+		// eslint-disable-next-line @typescript-eslint/dot-notation
+		const childs = this.dateTime?.['el'].shadowRoot?.querySelectorAll('.calendar-month-grid')?.[1]?.children;
+		if (!childs) {
+			return;
+		}
+
+		// eslint-disable-next-line guard-for-in
+		for (const childIndex in childs) {
+			const child = childs[childIndex];
+			if (!(child instanceof HTMLButtonElement)) {
+				continue;
+			}
+			const currentDay = Number(child.dataset?.day);
+			if (this.highlightDays.includes(currentDay)) {
+				child.style.setProperty('--highlight-color', 'rgba(var(--ion-color-success-rgb), 0.25)');
+			}
 		}
 	}
 
