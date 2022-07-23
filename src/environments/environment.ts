@@ -5,7 +5,7 @@
 export const environment = {
 	production: false,
 	DATE_FORMAT: 'MMMM yyyy',
-	DAY_FORMAT: 'EEEE, dd.LLLL',
+	DAY_FORMAT: 'EEEE, dd. LLLL',
 	DEMCIMAL_PATTERN: /^-?\d*[.,]?\d{0,2}$/,
 };
 

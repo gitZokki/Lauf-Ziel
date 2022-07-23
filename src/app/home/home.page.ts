@@ -67,9 +67,8 @@ export class HomePage {
 			const index = this.targets.indexOf(value);
 			if (index > -1) {
 				this.targets.splice(index, 1);
-				this.setFilteredTargets();
-				this.selectedTarget = this.filteredTargets[Math.max(0, index - 1)];
 				this.sortAndSaveTargets();
+				this.setFilteredTargets();
 			} else {
 				console.error('Not found for deletion:', value);
 			}
@@ -79,6 +78,7 @@ export class HomePage {
 	addTarget(value: TargetInterface): void {
 		this.targets.push(value);
 		this.sortAndSaveTargets();
+		this.setFilteredTargets();
 	}
 
 	changeTarget(newValue: TargetInterface): void {
@@ -124,15 +124,20 @@ export class HomePage {
 	}
 
 	getColorForWalk(walk: WalkInterface): string {
-		const currentMonth = new Date().getMonth() + 1;
-		const walkMonth = Number(walk.date.substring(5, 7));
-		const currentDay = new Date().getDate();
-		const walkDay = Number(walk.date.substring(8, 10));
+		const date = new Date();
+		// eslint-disable-next-line max-len
+		const walkDate = new Date(Number(walk.date.substring(0, 4)), Number(walk.date.substring(5, 7)) - 1, Number(walk.date.substring(8, 10)));
+		const currentDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
 
-		if (walkMonth <= currentMonth && ((walk.isDone && walk.walked && walkDay > currentDay) || (!walk.isDone && walkDay < currentDay))) {
-			return 'danger';
-		}
-		return walk.isDone ? ((walk.walked ?? 0) < walk.planned ? 'warning' : 'success') : '';
+		return walk.isDone
+			? (walk.walked ?? 0) < walk.planned
+				? 'warning'
+				: 'success'
+			: walkDate.getTime() === currentDate.getTime()
+			? 'warning'
+			: walkDate <= currentDate
+			? 'danger'
+			: '';
 	}
 
 	getWalkedKm(value: TargetInterface): number {
@@ -140,7 +145,6 @@ export class HomePage {
 	}
 
 	getAvarageKm(value: TargetInterface): number {
-		// value.walks.filter(w => w.isDone && w.walked).length
 		return Number((this.getWalkedKm(value) / new Date().getDate()).toFixed(2));
 	}
 
